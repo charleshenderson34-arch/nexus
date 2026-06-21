@@ -1,0 +1,1 @@
+web: npm run docs && npm run build && node dist/Server

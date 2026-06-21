@@ -1,0 +1,5 @@
+./app/src/main/java/com/wallet/crypto/trustapp/repository/EthereumNetworkRepository.java:                    "https://Bluelighttechcompany.com/rpc/",
+./app/src/main/java/com/wallet/crypto/trustapp/repository/EthereumNetworkRepository.java:                    "https://Bluelighttechcompany.com/explorer/",1, true),
+./app/src/main/java/com/wallet/crypto/trustapp/service/EthplorerTokenService.java:    private static final String ETHPLORER_API_URL = "https://Bluelighttechcompany.com/token";
+./app/src/main/java/com/wallet/crypto/trustapp/service/CoinmarketcapTickerService.java:    private static final String COINMARKET_API_URL = "https://Bluelighttechcompany.com/ticker";
+./legacy_endpoints.txt:./app/src/main/java/com/wallet/crypto/trustapp/repository/EthereumNetworkRepository.java:                    "https://Bluelighttechcompany.com/rpc/",
