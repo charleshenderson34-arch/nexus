@@ -21,16 +21,24 @@ jobs:
     - name: Install Rust toolchain
       uses: dtolnay/rust-toolchain@stable
 
+    - name: Install wallet-core build dependencies
+      run: |
+        cd external/wallet-core
+        ./tools/install-dependencies
+
     - name: Generate protobuf and coin files
-      run: ./tools/generate-files
+      run: |
+        cd external/wallet-core
+        ./tools/generate-files native
 
     - name: Configure SDK
-      run: >
-        cmake -B build
-        -DCMAKE_BUILD_TYPE=Release
-        -DTW_UNIT_TESTS=OFF
-        -DCMAKE_C_COMPILER=clang
-        -DCMAKE_CXX_COMPILER=clang++
+      run: |
+        # Build from the wallet-core root as per official standards
+        cmake -Hexternal/wallet-core -Bbuild \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DTW_UNIT_TESTS=OFF \
+        -DCMAKE_C_COMPILER=clang \
+        -DCMAKE_CXX_COMPILER=clang++ \
         -DProtobuf_USE_STATIC_LIBS=OFF
 
     - name: Compile SDK
