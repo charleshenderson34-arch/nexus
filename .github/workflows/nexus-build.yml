@@ -9,7 +9,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+    # Explicitly set submodules to false to stop the 128 error
     - uses: actions/checkout@v3
+      with:
+        submodules: false
 
     - name: Set up Clang
       run: |
@@ -19,7 +22,6 @@ jobs:
         echo "CXX=clang++" >> $GITHUB_ENV
 
     - name: Configure CMake
-      # Added -Wno-dev and -DCMAKE_POLICY_DEFAULT_CMP0167=OLD to bypass the Boost error
       run: cmake -B build -DBUILD_TESTS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_POLICY_DEFAULT_CMP0167=OLD
 
     - name: Compile Core
