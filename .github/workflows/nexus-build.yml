@@ -13,15 +13,11 @@ jobs:
       with:
         submodules: false
 
-    - name: Prepare Dependencies
+    - name: Install Dependencies
       run: |
-        # Create the missing directory
-        mkdir -p external/BigInt
-        # Fetch the missing BigInt source code (using a standard header-only implementation)
-        curl -L https://raw.githubusercontent.com/kokke/tiny-AES-c/master/aes.h -o external/BigInt/BigInt.h
-        
         sudo apt-get update
-        sudo apt-get install -y clang libboost-all-dev libgtest-dev
+        # Added protobuf-compiler and libprotobuf-dev to system deps
+        sudo apt-get install -y clang libboost-all-dev libgtest-dev protobuf-compiler libprotobuf-dev
         echo "CC=clang" >> $GITHUB_ENV
         echo "CXX=clang++" >> $GITHUB_ENV
 
@@ -32,6 +28,7 @@ jobs:
         -DCMAKE_C_COMPILER=clang 
         -DCMAKE_CXX_COMPILER=clang++ 
         -DCMAKE_POLICY_DEFAULT_CMP0167=OLD 
+        -DProtobuf_USE_STATIC_LIBS=OFF
         -Dgtest_DIR=/usr/src/gtest
 
     - name: Compile Core
