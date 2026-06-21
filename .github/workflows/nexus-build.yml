@@ -21,15 +21,15 @@ jobs:
         echo "CXX=clang++" >> $GITHUB_ENV
 
     - name: Configure CMake
-      # Added -DGOOGLETEST_DIR to point to system install
-      # Added -DFETCHCONTENT_FULLY_DISCONNECTED=OFF to allow downloading missing libs
+      # We override the missing directory lookups by pointing to standard paths
       run: >
         cmake -B build 
         -DBUILD_TESTS=OFF 
         -DCMAKE_C_COMPILER=clang 
         -DCMAKE_CXX_COMPILER=clang++ 
         -DCMAKE_POLICY_DEFAULT_CMP0167=OLD 
-        -DFETCHCONTENT_FULLY_DISCONNECTED=OFF
+        -DEXTERNAL_BIGINT_PATH=/usr/include 
+        -Dgtest_DIR=/usr/src/gtest
 
     - name: Compile Core
       run: cmake --build build -j4
