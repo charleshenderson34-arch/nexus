@@ -16,8 +16,7 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        # Added protobuf-compiler and libprotobuf-dev to system deps
-        sudo apt-get install -y clang libboost-all-dev libgtest-dev protobuf-compiler libprotobuf-dev
+        sudo apt-get install -y clang libboost-all-dev protobuf-compiler libprotobuf-dev
         echo "CC=clang" >> $GITHUB_ENV
         echo "CXX=clang++" >> $GITHUB_ENV
 
@@ -27,9 +26,8 @@ jobs:
         -DBUILD_TESTS=OFF 
         -DCMAKE_C_COMPILER=clang 
         -DCMAKE_CXX_COMPILER=clang++ 
-        -DCMAKE_POLICY_DEFAULT_CMP0167=OLD 
+        -DTR_USE_SYSTEM_PROTOBUF=ON 
         -DProtobuf_USE_STATIC_LIBS=OFF
-        -Dgtest_DIR=/usr/src/gtest
 
     - name: Compile Core
       run: cmake --build build -j4
