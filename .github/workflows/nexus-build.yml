@@ -16,12 +16,20 @@ jobs:
     - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y clang libboost-all-dev
+        sudo apt-get install -y clang libboost-all-dev libgtest-dev
         echo "CC=clang" >> $GITHUB_ENV
         echo "CXX=clang++" >> $GITHUB_ENV
 
     - name: Configure CMake
-      run: cmake -B build -DBUILD_TESTS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ -DCMAKE_POLICY_DEFAULT_CMP0167=OLD
+      # Added -DGOOGLETEST_DIR to point to system install
+      # Added -DFETCHCONTENT_FULLY_DISCONNECTED=OFF to allow downloading missing libs
+      run: >
+        cmake -B build 
+        -DBUILD_TESTS=OFF 
+        -DCMAKE_C_COMPILER=clang 
+        -DCMAKE_CXX_COMPILER=clang++ 
+        -DCMAKE_POLICY_DEFAULT_CMP0167=OLD 
+        -DFETCHCONTENT_FULLY_DISCONNECTED=OFF
 
     - name: Compile Core
       run: cmake --build build -j4
