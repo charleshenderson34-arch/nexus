@@ -1,0 +1,2 @@
+/root/nexus-workspace/CMakeFiles/rebuild_cache.dir
+/root/nexus-workspace/CMakeFiles/edit_cache.dir
