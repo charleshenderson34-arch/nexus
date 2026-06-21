@@ -21,6 +21,9 @@ jobs:
     - name: Install Rust toolchain
       uses: dtolnay/rust-toolchain@stable
 
+    - name: Install cbindgen
+      run: cargo install --locked cbindgen
+
     - name: Install wallet-core build dependencies
       run: |
         cd external/wallet-core
