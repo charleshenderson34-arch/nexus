@@ -9,15 +9,14 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    # Explicitly set submodules to false to stop the 128 error
     - uses: actions/checkout@v3
       with:
         submodules: false
 
-    - name: Set up Clang
+    - name: Install Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y clang
+        sudo apt-get install -y clang libboost-all-dev
         echo "CC=clang" >> $GITHUB_ENV
         echo "CXX=clang++" >> $GITHUB_ENV
 
