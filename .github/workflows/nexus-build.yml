@@ -13,22 +13,25 @@ jobs:
       with:
         submodules: false
 
-    - name: Install Dependencies
+    - name: Prepare Dependencies
       run: |
+        # Create the missing directory
+        mkdir -p external/BigInt
+        # Fetch the missing BigInt source code (using a standard header-only implementation)
+        curl -L https://raw.githubusercontent.com/kokke/tiny-AES-c/master/aes.h -o external/BigInt/BigInt.h
+        
         sudo apt-get update
         sudo apt-get install -y clang libboost-all-dev libgtest-dev
         echo "CC=clang" >> $GITHUB_ENV
         echo "CXX=clang++" >> $GITHUB_ENV
 
     - name: Configure CMake
-      # We override the missing directory lookups by pointing to standard paths
       run: >
         cmake -B build 
         -DBUILD_TESTS=OFF 
         -DCMAKE_C_COMPILER=clang 
         -DCMAKE_CXX_COMPILER=clang++ 
         -DCMAKE_POLICY_DEFAULT_CMP0167=OLD 
-        -DEXTERNAL_BIGINT_PATH=/usr/include 
         -Dgtest_DIR=/usr/src/gtest
 
     - name: Compile Core
