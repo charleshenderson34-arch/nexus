@@ -16,7 +16,7 @@ jobs:
     - name: Install System Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake clang ninja-build libboost-all-dev libgtest-dev protobuf-compiler libprotobuf-dev ruby
+        sudo apt-get install -y cmake clang libboost-all-dev protobuf-compiler libprotobuf-dev ruby
 
     - name: Install Rust toolchain
       uses: dtolnay/rust-toolchain@stable
@@ -33,7 +33,6 @@ jobs:
 
     - name: Configure SDK
       run: |
-        # Build from the wallet-core root as per official standards
         cmake -Hexternal/wallet-core -Bbuild \
         -DCMAKE_BUILD_TYPE=Release \
         -DTW_UNIT_TESTS=OFF \
