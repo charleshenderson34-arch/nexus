@@ -1,4 +1,4 @@
-name: Nexus Cloud Build
+name: Trust Wallet SDK Build
 
 on:
   push:
@@ -11,14 +11,21 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        submodules: recursive
+        submodules: false
 
-    - name: Install Build Dependencies
+    - name: Install System Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y cmake clang libboost-all-dev protobuf-compiler libprotobuf-dev
+        sudo apt-get install -y cmake clang libboost-all-dev libgtest-dev protobuf-compiler libprotobuf-dev
 
-    - name: Configure and Build Wallet Core
-      run: |
-        cmake -B build -DBUILD_TESTS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
-        cmake --build build -j4
+    - name: Configure SDK
+      run: >
+        cmake -B build 
+        -DBUILD_TESTS=OFF 
+        -DCMAKE_C_COMPILER=clang 
+        -DCMAKE_CXX_COMPILER=clang++ 
+        -DProtobuf_USE_STATIC_LIBS=OFF
+        -DTW_SDK_BUILD=ON
+
+    - name: Compile SDK
+      run: cmake --build build -j4
