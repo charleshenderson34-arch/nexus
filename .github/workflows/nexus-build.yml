@@ -11,23 +11,14 @@ jobs:
     steps:
     - uses: actions/checkout@v3
       with:
-        submodules: false
+        submodules: recursive
 
-    - name: Install Dependencies
+    - name: Install Build Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y clang libboost-all-dev protobuf-compiler libprotobuf-dev
-        echo "CC=clang" >> $GITHUB_ENV
-        echo "CXX=clang++" >> $GITHUB_ENV
+        sudo apt-get install -y cmake clang libboost-all-dev protobuf-compiler libprotobuf-dev
 
-    - name: Configure CMake
-      run: >
-        cmake -B build 
-        -DBUILD_TESTS=OFF 
-        -DCMAKE_C_COMPILER=clang 
-        -DCMAKE_CXX_COMPILER=clang++ 
-        -DTR_USE_SYSTEM_PROTOBUF=ON 
-        -DProtobuf_USE_STATIC_LIBS=OFF
-
-    - name: Compile Core
-      run: cmake --build build -j4
+    - name: Configure and Build Wallet Core
+      run: |
+        cmake -B build -DBUILD_TESTS=OFF -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+        cmake --build build -j4
