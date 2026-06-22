@@ -3,8 +3,8 @@ description: 'Standardizes the wallet-core build process'
 runs:
   using: "composite"
   steps:
-    - name: Install Clang and System Tools
-      run: sudo apt-get update && sudo apt-get install -y clang
+    - name: Install System Dependencies
+      run: sudo apt-get update && sudo apt-get install -y clang libboost-all-dev
       shell: bash
 
     - name: Install Rust toolchain
