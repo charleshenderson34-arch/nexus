@@ -13,17 +13,18 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Install Dependencies
+      - name: Install Full Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake clang libcurl4-openssl-dev protobuf-compiler libprotobuf-dev
+          sudo apt-get install -y cmake clang libboost-all-dev protobuf-compiler libprotobuf-dev ruby libcurl4-openssl-dev build-essential ninja-build
 
       - name: Build Wallet Core
         run: |
           cd external/wallet-core
           ./tools/generate-files native
-          cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release -DTW_UNIT_TESTS=OFF
-          cmake --build build -j4
+          mkdir build && cd build
+          cmake -DCMAKE_BUILD_TYPE=Release ..
+          make -j4 VERBOSE=1
 
       - name: Compile Ingestion Engine
         run: |
