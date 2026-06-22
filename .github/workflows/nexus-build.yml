@@ -1,4 +1,4 @@
-name: Trust Wallet SDK Build
+name: Trust Wallet Ingestion Pipeline
 
 on:
   push:
@@ -6,44 +6,42 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  ingest:
     runs-on: ubuntu-latest
+    env:
+      RUSTC_BOOTSTRAP: 1
     steps:
-    - uses: actions/checkout@v4
-      with:
-        submodules: recursive
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-    - name: Install System Dependencies
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y cmake clang libboost-all-dev protobuf-compiler libprotobuf-dev ruby
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake clang libboost-all-dev protobuf-compiler libprotobuf-dev ruby libcurl4-openssl-dev
 
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@stable
+      - name: Install Toolchains
+        run: |
+          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+          source $HOME/.cargo/env
+          cargo install --locked cbindgen
 
-    - name: Install cbindgen
-      run: cargo install --locked cbindgen
+      - name: Build Wallet Core
+        run: |
+          cd external/wallet-core
+          ./tools/generate-files native
+          cmake -H. -Bbuild -DCMAKE_BUILD_TYPE=Release -DTW_UNIT_TESTS=OFF
+          cmake --build build -j4
 
-    - name: Install wallet-core build dependencies
-      run: |
-        cd external/wallet-core
-        ./tools/install-dependencies
+      - name: Compile Ingestion Engine
+        run: |
+          g++ -std=c++17 ingestion.cpp broadcaster.cpp \
+            -Iexternal/wallet-core/include \
+            -Lexternal/wallet-core/build -lTrustWalletCore \
+            -lcurl -o ingest
 
-    - name: Generate protobuf and coin files
-      env:
-        RUSTC_BOOTSTRAP: 1
-      run: |
-        cd external/wallet-core
-        ./tools/generate-files native
-
-    - name: Configure SDK
-      run: |
-        cmake -Hexternal/wallet-core -Bbuild \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DTW_UNIT_TESTS=OFF \
-        -DCMAKE_C_COMPILER=clang \
-        -DCMAKE_CXX_COMPILER=clang++ \
-        -DProtobuf_USE_STATIC_LIBS=OFF
-
-    - name: Compile SDK
-      run: cmake --build build -j4
+      - name: Execute Portfolio Ingestion
+        env:
+          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+        run: ./ingest
