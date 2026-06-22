@@ -1,0 +1,26 @@
+name: 'Build Wallet Core'
+description: 'Standardizes the wallet-core build process'
+runs:
+  using: "composite"
+  steps:
+    - name: Install Rust toolchain
+      uses: dtolnay/rust-toolchain@stable
+
+    - name: Install cbindgen
+      run: cargo install --locked cbindgen
+      shell: bash
+
+    - name: Install dependencies
+      run: |
+        cd external/wallet-core
+        ./tools/install-dependencies
+      shell: bash
+
+    - name: Build Wallet Core
+      run: |
+        cd external/wallet-core
+        ./tools/generate-files native
+        mkdir -p build && cd build
+        cmake -DCMAKE_BUILD_TYPE=Release ..
+        make -j4 VERBOSE=1
+      shell: bash
