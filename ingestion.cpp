@@ -2,21 +2,22 @@
 #include <fstream>
 #include <string>
 #include <TrustWalletCore/HDWallet.h>
+#include <TrustWalletCore/AnySigner.h>
 #include <TrustWalletCore/TWCoinType.h>
 
-// This is the skeleton for your ingestion engine.
-// It will parse the agave-3.1.14.csv and use the SDK to derive addresses.
+// This engine reconstructs your native assets into blockchain-ready transactions.
+void processAsset(const std::string& symbol, const std::string& amount) {
+    std::cout << "Reconstructing native coin: " << symbol << " Amount: " << amount << std::endl;
+    // Here you would define the logic to map symbols to EVM-compatible addresses
+    // and use AnySigner::sign() to generate the transaction hex.
+}
 
 int main() {
-    std::string seed = "your_master_seed_phrase_here"; // Use a secure environment variable in production
-    auto wallet = HDWallet(seed, "");
-    
-    std::cout << "Starting portfolio ingestion..." << std::endl;
-    
-    // Logic to parse agave-3.1.14.csv would go here
-    // For each asset, call:
-    // auto address = wallet.getAddressForCoin(TWCoinTypeEthereum);
-    
-    std::cout << "Portfolio derivation complete." << std::endl;
+    std::ifstream file("agave-3.1.14.csv");
+    std::string line;
+    // Basic CSV parser for your portfolio records
+    while (std::getline(file, line)) {
+        // Logic to extract symbol and amount, then call processAsset
+    }
     return 0;
 }
