@@ -30,6 +30,8 @@ jobs:
         ./tools/install-dependencies
 
     - name: Generate protobuf and coin files
+      env:
+        RUSTC_BOOTSTRAP: 1
       run: |
         cd external/wallet-core
         ./tools/generate-files native
