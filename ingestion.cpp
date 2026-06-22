@@ -1,31 +1,32 @@
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <TrustWalletCore/AnySigner.h>
 #include <TrustWalletCore/TWCoinType.h>
 #include <TrustWalletCore/Ethereum/Proto/Ethereum.pb.h>
 
-void reconstructAndSign(const std::string& privateKeyHex, const std::string& toAddress, const std::string& amount) {
-    // Construct the Ethereum Signing Input
+void transformAndReconstruct(const std::string& symbol, const std::string& amount, const std::string& toAddress) {
     Ethereum::Proto::SigningInput input;
     input.set_to_address(toAddress);
-    input.set_chain_id("1"); // Chain ID 1 for Ethereum Mainnet
-    input.set_nonce(0);      // Note: Must fetch current nonce from node
-    input.set_gas_price(20000000000); 
+    input.set_chain_id("1");
+    input.set_nonce(0); // Note: Update with dynamic nonce fetching from node
+    input.set_gas_price(20000000000);
     input.set_gas_limit(21000);
     input.set_amount(amount);
-    input.set_private_key(privateKeyHex);
-
-    // Sign the transaction
-    auto inputData = input.SerializeAsString();
-    auto outputData = AnySigner::sign(inputData, TWCoinTypeEthereum);
     
-    Ethereum::Proto::SigningOutput output;
-    output.ParseFromString(outputData);
-
-    std::cout << "Reconstructed Transaction Hex: " << output.encoded() << std::endl;
+    std::cout << "Transforming " << symbol << " | Amount: " << amount << std::endl;
 }
 
 int main() {
-    std::cout << "Ingestion Engine Initialized." << std::endl;
-    // CSV parsing loop goes here
+    std::ifstream file("agave-3.1.14.csv");
+    std::string line;
+    if (!file.is_open()) {
+        std::cerr << "Error: Could not open agave-3.1.14.csv" << std::endl;
+        return 1;
+    }
+    while (std::getline(file, line)) {
+        // Assume CSV format: symbol,amount,toAddress
+        transformAndReconstruct("AGAVE", "100", "0xTargetAddress");
+    }
     return 0;
 }

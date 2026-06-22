@@ -8,24 +8,15 @@ on:
 jobs:
   ingest:
     runs-on: ubuntu-latest
-    env:
-      RUSTC_BOOTSTRAP: 1
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           submodules: recursive
 
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake clang libboost-all-dev protobuf-compiler libprotobuf-dev ruby libcurl4-openssl-dev
-
-      - name: Install Toolchains
-        run: |
-          curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-          source $HOME/.cargo/env
-          cargo install --locked cbindgen
+          sudo apt-get install -y cmake clang libcurl4-openssl-dev protobuf-compiler libprotobuf-dev
 
       - name: Build Wallet Core
         run: |
