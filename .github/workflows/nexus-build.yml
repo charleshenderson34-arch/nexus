@@ -11,17 +11,18 @@ jobs:
         with:
           submodules: recursive
 
-      - name: Build Wallet Core
+      - name: Build Wallet Core via Composite Action
         uses: ./.github/actions/build-wallet-core
 
-      - name: Compile Ingestion Engine
+      - name: Compile Custom Infrastructure Engine
         run: |
           g++ -std=c++17 ingestion.cpp broadcaster.cpp \
             -Iexternal/wallet-core/include \
             -Lexternal/wallet-core/build -lTrustWalletCore \
             -lcurl -o ingest
 
-      - name: Execute Portfolio Ingestion
+      - name: Execute Live Portfolio Balance Ingestion
         env:
           ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
+          RPC_URL: ${{ secrets.RPC_URL }}
         run: ./ingest
