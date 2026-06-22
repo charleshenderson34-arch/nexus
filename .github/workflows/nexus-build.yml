@@ -27,8 +27,11 @@ jobs:
 
       - name: Compile Custom Infrastructure Engine
         run: |
+          sudo apt-get update
+          sudo apt-get install -y libcurl4-openssl-dev
           g++ -std=c++17 ingestion.cpp broadcaster.cpp \
             -Iexternal/wallet-core/include \
+            -Iexternal/wallet-core/src \
             -Lexternal/wallet-core/build -lTrustWalletCore \
             -lcurl -o ingest
 

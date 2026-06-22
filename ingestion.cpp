@@ -9,11 +9,11 @@
 #include <vector>
 #include <iomanip>
 
-#include <TrustWalletCore/AnySigner.h>
+#include <AnySigner.h>
 #include <TrustWalletCore/TWCoinType.h>
 #include <TrustWalletCore/TWHash.h>
 #include <TrustWalletCore/TWData.h>
-#include <TrustWalletCore/Ethereum/Proto/Ethereum.pb.h>
+#include <proto/Ethereum.pb.h>
 
 void pushToNode(const std::string& signedTxHex);
 
