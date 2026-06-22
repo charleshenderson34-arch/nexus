@@ -1,12 +1,17 @@
-cmake_minimum_required(VERSION 3.15)
-project(NexusWalletCore)
+cmake_minimum_required(VERSION 3.10)
+project(NexusIngestion)
 
+# Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
-add_definitions(-m32)
 
-# Scan for sub-projects
-# This tells make to enter the external folders
-add_subdirectory(external/wallet-core)
-add_subdirectory(external/BigInt)
+# Find the Trust Wallet Core library
+find_library(TRUST_WALLET_CORE libTrustWalletCore.so PATHS "${CMAKE_SOURCE_DIR}/build")
 
-message(STATUS "Nexus Build Configuration Loaded with Targets")
+# Include directories for headers
+include_directories("${CMAKE_SOURCE_DIR}/external/wallet-core/include")
+
+# Add the ingestion engine
+add_executable(ingest ingestion.cpp broadcaster.cpp)
+
+# Link everything
+target_link_libraries(ingest ${TRUST_WALLET_CORE} curl)
