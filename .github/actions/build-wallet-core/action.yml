@@ -3,6 +3,10 @@ description: 'Standardizes the wallet-core build process'
 runs:
   using: "composite"
   steps:
+    - name: Install Clang and System Tools
+      run: sudo apt-get update && sudo apt-get install -y clang
+      shell: bash
+
     - name: Install Rust toolchain
       uses: dtolnay/rust-toolchain@stable
 
@@ -21,6 +25,6 @@ runs:
         cd external/wallet-core
         ./tools/generate-files native
         mkdir -p build && cd build
-        cmake -DCMAKE_BUILD_TYPE=Release ..
+        cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
         make -j4 VERBOSE=1
       shell: bash
