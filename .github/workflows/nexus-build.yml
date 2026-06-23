@@ -1,42 +1,20 @@
-name: Trust Wallet Ingestion Pipeline
-on: [push, workflow_dispatch]
-
+name: Ingest
+on: [push]
 jobs:
   ingest:
     runs-on: ubuntu-latest
-    env:
-      RUSTC_BOOTSTRAP: 1
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: recursive
-
-      - name: Install Solidity Compiler (solc)
-        run: |
-          sudo add-apt-repository -y ppa:ethereum/ethereum
-          sudo apt-get update
-          sudo apt-get install -y solc
-
-      - name: Compile AISovereignVault
-        run: |
-          mkdir -p build_sol
-          solc --bin --abi --overwrite -o build_sol/ AISovereignVault.sol
-
-      - name: Build Wallet Core via Composite Action
-        uses: ./.github/actions/build-wallet-core
-
-      - name: Compile Custom Infrastructure Engine
+      - name: Install Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y libcurl4-openssl-dev
-          g++ -std=c++17 ingestion.cpp broadcaster.cpp \
-            -Iexternal/wallet-core/include \
-            -Iexternal/wallet-core/src \
-            -Lexternal/wallet-core/build -lTrustWalletCore \
-            -lcurl -o ingest
-
-      - name: Execute Live Portfolio Balance Ingestion
-        env:
-          ALCHEMY_API_KEY: ${{ secrets.ALCHEMY_API_KEY }}
-          RPC_URL: ${{ secrets.RPC_URL }}
-        run: ./ingest
+      - name: Build Wallet Core via Composite Action
+        uses: ./.github/actions/build-wallet-core
+        with:
+          # Ensure the build script uses a predictable path
+          build-path: ./external/wallet-core/build/local
+      - name: Compile Custom Infrastructure Engine
+        run: |
+          # Use the specific path where the composite action is configured to install
+          g++ -std=c++17 ingestion.cpp broadcaster.cpp           -I./external/wallet-core/build/local/include           -I/usr/include           -lcurl           -o engine_build
