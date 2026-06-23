@@ -30,16 +30,10 @@ runs:
       run: |
         echo "Injecting target fallbacks into root and nested CMake configurations..."
         find . -name "CMakeLists.txt" | while read -r cmake_file; do
-          # 1. Stub out all test suites
           if [[ "$cmake_file" == *"/tests/CMakeLists.txt" ]]; then
             echo "# Forced stub by CI to bypass test dependencies" > "$cmake_file"
           else
-            # 2. Prepend a safe fallback target definition to clear generation errors
-            cat << 'INNER_EOF' > cmake_patch.tmp
-if(NOT TARGET TRUST_WALLET_CORE)
-  add_library(TRUST_WALLET_CORE INTERFACE)
-endif()
-INNER_EOF
+            printf "if(NOT TARGET TRUST_WALLET_CORE)\n  add_library(TRUST_WALLET_CORE INTERFACE)\nendif()\n" > cmake_patch.tmp
             cat "$cmake_file" >> cmake_patch.tmp
             mv cmake_patch.tmp "$cmake_file"
           fi
@@ -48,11 +42,9 @@ INNER_EOF
 
     - name: Execute Build Architecture
       run: |
-        # Enforce Clang toolchain environment variables
         export CC=clang
         export CXX=clang++
 
-        # Locate build script or fall back straight to native CMake
         FOUND_SCRIPT=$(find . -name "build.sh" -print -quit)
         
         if [ -n "$FOUND_SCRIPT" ]; then
