@@ -1,5 +1,5 @@
 name: 'Build Wallet Core'
-description: 'Builds the core wallet architecture, initializes submodules, and enforces an absolute bypass on broken test directories'
+description: 'Builds the core wallet architecture using the Clang compiler toolchain and satisfies Boost library requirements'
 inputs:
   build-path:
     description: 'Optional target path for the build buildout'
@@ -12,19 +12,6 @@ runs:
       run: |
         sudo apt-get update
         sudo apt-get install -y libboost-all-dev
-      shell: bash
-
-    - name: Initialize and Sync Submodules
-      run: |
-        git submodule update --init --recursive
-      shell: bash
-
-    - name: Force Stub Broken Tests Configuration
-      run: |
-        # Completely truncate the tests CMake file to bypass the missing gtest directory error
-        if [ -f "tests/CMakeLists.txt" ]; then
-          echo "# Forced stub by CI to bypass missing dependencies" > tests/CMakeLists.txt
-        fi
       shell: bash
 
     - name: Run build script with Clang toolchain
