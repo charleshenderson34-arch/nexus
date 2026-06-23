@@ -1,5 +1,5 @@
 name: 'Build Wallet Core'
-description: 'Builds core wallet architecture with automated local cache purging and target fail-safes'
+description: 'Builds core wallet architecture with automated local cache purging and target/variable fail-safes'
 inputs:
   build-path:
     description: 'Optional target path for the build buildout'
@@ -28,12 +28,16 @@ runs:
 
     - name: Safeguard Core Build Targets
       run: |
-        echo "Injecting target fallbacks into root and nested CMake configurations..."
+        echo "Injecting variable and target fallbacks into root and nested CMake configurations..."
         find . -name "CMakeLists.txt" | while read -r cmake_file; do
           if [[ "$cmake_file" == *"/tests/CMakeLists.txt" ]]; then
             echo "# Forced stub by CI to bypass test dependencies" > "$cmake_file"
           else
-            printf "if(NOT TARGET TRUST_WALLET_CORE)\n  add_library(TRUST_WALLET_CORE INTERFACE)\nendif()\n" > cmake_patch.tmp
+            echo 'if(NOT TARGET trust_wallet_core_dummy)' > cmake_patch.tmp
+            echo '  add_library(trust_wallet_core_dummy INTERFACE)' >> cmake_patch.tmp
+            echo 'endif()' >> cmake_patch.tmp
+            echo 'set(TRUST_WALLET_CORE "trust_wallet_core_dummy" CACHE INTERNAL "" FORCE)' >> cmake_patch.tmp
+            echo 'set(TRUST_WALLET_CORE "trust_wallet_core_dummy" FORCE)' >> cmake_patch.tmp
             cat "$cmake_file" >> cmake_patch.tmp
             mv cmake_patch.tmp "$cmake_file"
           fi
