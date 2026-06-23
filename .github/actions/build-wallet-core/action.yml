@@ -1,30 +1,16 @@
 name: 'Build Wallet Core'
-description: 'Standardizes the wallet-core build process'
+description: 'Builds Trust Wallet Core with required dependencies'
 runs:
   using: "composite"
   steps:
     - name: Install System Dependencies
-      run: sudo apt-get update && sudo apt-get install -y clang libboost-all-dev
       shell: bash
-
-    - name: Install Rust toolchain
-      uses: dtolnay/rust-toolchain@stable
-
-    - name: Install cbindgen
-      run: cargo install --locked cbindgen
-      shell: bash
-
-    - name: Install dependencies
-      run: |
-        cd external/wallet-core
-        ./tools/install-dependencies
-      shell: bash
-
+      run: sudo apt-get update && sudo apt-get install -y clang libboost-all-dev libprotobuf-dev protobuf-compiler
     - name: Build Wallet Core
+      shell: bash
       run: |
         cd external/wallet-core
         ./tools/generate-files native
         mkdir -p build && cd build
         cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++ ..
-        make -j4 VERBOSE=1
-      shell: bash
+        make -j4
