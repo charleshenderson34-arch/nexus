@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest>
+  <remote name="gitlab" fetch="https://gitlab.com/" />
+  <default revision="main" remote="gitlab" sync-j="4" />
+  
+  <project path="external/wallet-core" name="your-org/wallet-core" />
+</manifest>
