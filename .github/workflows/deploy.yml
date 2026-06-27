@@ -12,18 +12,19 @@ jobs:
       - name: Fetch Trust Wallet Core Headers
         run: |
           git clone --depth 1 https://github.com/trustwallet/wallet-core.git
-          sudo mkdir -p /usr/local/include/TrustWalletCore
-          sudo cp -r wallet-core/include/TrustWalletCore/* /usr/local/include/TrustWalletCore/
-
+          
       - name: Setup Node 20
         uses: actions/setup-node@v3
         with:
           node-version: '20'
           
       - name: Install and Build
+        env:
+          # Tell CMake where to look for Trust Wallet Core headers
+          CPLUS_INCLUDE_PATH: ${{ github.workspace }}/wallet-core/include
         run: |
           npm install
-          # Add your specific build command here if needed
+          # Your existing build command, e.g., 'cmake -B build -D...' then 'make'
           
       - name: Deploy
         env:
